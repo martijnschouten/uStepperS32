@@ -28,6 +28,16 @@ class TMC5130
 		 * @param[in]	position - position the motor should move to, in micro steps (1/256th default)
 		 */
 	void setPosition(int32_t position);
+	
+	/**
+		 * @brief		Set the motor torque
+		 *
+		 *				This function tells the motor to apply an positive or an negative torque
+		 *
+		 * @param[in]	phase - sets the phase of the control signal
+		 */
+	void setPhase(float current);
+
 	/**
 		 * @brief		Set motor velocity
 		 *
@@ -80,6 +90,12 @@ class TMC5130
 		 * @param[in]	direction - 0 = normal direction, 1 = inverted direction
 		 */
 	void setShaftDirection(bool direction);
+
+	/**
+		 * @brief		EEnables direct mode
+		 *
+		 */
+	void enableDirectMode();
 
 	/**
 		 * @brief		Stops any ongoing movement with deceleration
@@ -166,9 +182,9 @@ class TMC5130
 	void updateCurrent(void);
 
 	/**
-		 * @brief		Set motor driver to position mode or velocity mode
+		 * @brief		Set motor driver to position mode or velocity mode or torque mode
 		 *
-		 * @param[in]	mode - can be either POSITIONING_MODE or VELOCITY_MODE_POS
+		 * @param[in]	mode - can be either POSITIONING_MODE or VELOCITY_MODE_POS or TORQUE_MODE
 		 */
 	void setRampMode(uint8_t mode);
 

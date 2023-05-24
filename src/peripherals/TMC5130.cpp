@@ -85,7 +85,14 @@ void TMC5130::enableStallguard(int8_t threshold, bool stopOnStall, float rpm)
 		rpm = 2;
 
 	/* Disable StealthChop for stallguard operation */
-	this->writeRegister(GCONF, EN_PWM_MODE(0) | I_SCALE_ANALOG(1));
+	if (this->mode == DRIVER_DIRECT)
+	{
+		this->writeRegister(GCONF, EN_PWM_MODE(0) | I_SCALE_ANALOG(1) | DIRECT_MODE);
+	}
+	else
+	{
+		this->writeRegister(GCONF, EN_PWM_MODE(0) | I_SCALE_ANALOG(1));
+	}
 	this->setShaftDirection(ptr->shaftDir);
 
 	// Configure COOLCONF for stallguard
@@ -109,7 +116,14 @@ void TMC5130::enableStallguard(int8_t threshold, bool stopOnStall, float rpm)
 void TMC5130::disableStallguard(void)
 {
 	// Reenable stealthchop
-	this->writeRegister(GCONF, EN_PWM_MODE(1) | I_SCALE_ANALOG(1));
+	if (this->mode == DRIVER_DIRECT)
+	{
+		this->writeRegister(GCONF, EN_PWM_MODE(1) | I_SCALE_ANALOG(1) | DIRECT_MODE);
+	}
+	else
+	{
+		this->writeRegister(GCONF, EN_PWM_MODE(1) | I_SCALE_ANALOG(1));
+	}
 	this->setShaftDirection(ptr->shaftDir);
 
 	// Disable all stallguard configuration
@@ -156,6 +170,21 @@ void TMC5130::setPosition(int32_t position)
 	this->setRampMode(POSITIONING_MODE);
 	this->writeRegister(XTARGET, position);
 	this->xTarget = position;
+}
+
+void TMC5130::setPhase(float phase)
+{
+	this->mode = DRIVER_DIRECT;
+	this->enableDirectMode();
+	float phase_rad = phase/180.0*3.14159265359;
+	int32_t A = (int16_t)(cos(phase_rad)*255.0);
+	int32_t B = (int16_t)(sin(phase_rad)*255.0);
+	if(B == 0) B = 1;
+	//Serial.println(A,HEX);
+	//Serial.println(B,HEX);
+	uint32_t combination = (uint32_t)((B & 0x000001FF)<<16) | (A & 0x000001FF);
+	//Serial.println(combination,HEX);
+	this->writeRegister(XTARGET, combination);
 }
 
 void TMC5130::setDirection(bool direction)
@@ -227,6 +256,7 @@ void TMC5130::reset(void)
 void TMC5130::enableStealth()
 {
 	/* Set GCONF and enable stealthChop */
+
 	this->writeRegister(GCONF, EN_PWM_MODE(1) | I_SCALE_ANALOG(1));
 	this->setShaftDirection(0);
 
@@ -255,6 +285,15 @@ void TMC5130::setShaftDirection(bool direction)
 	{
 		value &= ~(0x01 << 4);
 	}
+	this->writeRegister(GCONF, value);
+}
+
+void TMC5130::enableDirectMode()
+{
+	// Read the register to save the settings
+	int32_t value = this->readRegister(GCONF);
+	// Update the direct mode bit
+	value |= DIRECT_MODE;
 	this->writeRegister(GCONF, value);
 }
 

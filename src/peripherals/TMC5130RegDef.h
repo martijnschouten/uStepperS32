@@ -8,6 +8,7 @@
 #define DIRECTION(n) (((n)&0x1) << 4)	  /**< Please check datasheet for register description */
 #define EN_PWM_MODE(n) (((n)&0x1) << 2)	/**< Please check datasheet for register description */
 #define I_SCALE_ANALOG(n) (((n)&0x1) << 0) /**< Please check datasheet for register description */
+#define DIRECT_MODE 1 << 16 /**< Please check datasheet for register description */
 
 #define GSTAT 0x01		/**< Please check datasheet for register description */
 #define X_COMPARE 0x05  /**< Please check datasheet for register description */
@@ -100,5 +101,6 @@
 #define DRIVER_STOP 0	 /**< Define label for indicating driver is in standstill mode */
 #define DRIVER_VELOCITY 1 /**< Define label for indicating driver is in velocity mode */
 #define DRIVER_POSITION 2 /**< Define label for indicating driver is in position mode */
+#define DRIVER_DIRECT 3 /**< Define label for indicating driver is in direct mode */
 
 #endif
