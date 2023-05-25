@@ -29,6 +29,7 @@ class TLE5012B
 	float getRPM();
 	uint8_t getStatus(void);
 	bool detectMagnet(void);
+	void setOffset(float offset);
 	
   private:
 	Spi spiHandle;

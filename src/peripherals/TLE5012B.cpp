@@ -16,8 +16,8 @@ void TLE5012B::init()
 {
 	this->spiHandle.init();
 	this->sample();
-	this->encoderOffset = this->angle;
-	this->angle = 0;
+	//this->encoderOffset = this->angle;
+	//this->angle = 0;
 	this->angleMoved = 0;
 	this->sample();
 }
@@ -81,6 +81,11 @@ bool TLE5012B::sample()
 float TLE5012B::getAngle()
 {
 	return CONVERTENCODERRAWTOANGLE(this->angle);
+}
+
+void TLE5012B::setOffset(float offset)
+{
+	this->encoderOffset = offset;
 }
 
 void TLE5012B::setHome(float initialAngle)
